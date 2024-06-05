@@ -1,15 +1,16 @@
 import { Container } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import setup from '../assets/LynxSetup.png';
+import { getLynxPort } from './util/UseSettings';
 
 const txt = `
 # Integration with FinishLynx
-Using the CrewTimer FinishLynx Connector with FinishLynx requires both
+Using the CrewTimer FinishLynx Connect utility with FinishLynx requires both
 CrewTimer and FinishLynx to be in agreement about the configuration.
 
 For a quick overview see the [CrewTimer FinishLynx Connect video](https://www.youtube.com/watch?v=633Bw2ub20Q).
 
-**You must be running FinishLynx 12.10 or later for full functionality**
+**You must be running FinishLynx 12.10 or later for full functionality**  In addition the FinishLynx Network Comm Port option (or alternative) must be present and activated.
 
 ## Configuration Steps
 1. Run CrewTimer FinishLynx Connect and enter your race credentials
@@ -20,8 +21,8 @@ This will place a CrewTimer.lss scoreboard file into the specified folder.
    - Create New Scoreboard
       - Script: CrewTimer.lss
       - Serial Port: Network(connect)
-      - Port: 5000
-      - IP Address: 127.0.0.1 if CrewTimer connect running on same machine
+      - Port: ${getLynxPort()}
+      - IP Address: 127.0.0.1 if CrewTimer FinishLynx Connect running on same machine
       - Running Time: Off
       - Results:
           - Auto

@@ -5,8 +5,9 @@ import Tab from '@mui/material/Tab';
 import Setup from './Setup';
 import Status from './Status';
 import { useInitializing, useTabPosition } from './util/UseSettings';
-import FinishLynxHelp from './FinishLynxHelp';
 import { Toast } from './Toast';
+import FinishLynxHelp from './FinishLynxHelp';
+import FLSetup from './FLSetup';
 
 const useStyles = makeStyles({
   root: {
@@ -21,15 +22,30 @@ export default function CenteredTabs() {
   const [tabPosition, setTabPosition] = useTabPosition();
   const [initializing] = useInitializing();
 
-  const handleChange = (_event: unknown, newValue: number) => {
+  const handleChange = (_event: unknown, newValue: string) => {
     setTabPosition(newValue);
   };
 
   if (initializing) {
     return <></>;
   }
+
+  let Page = Setup;
+  switch (tabPosition) {
+    case 'CrewTimer':
+      Page = Setup;
+      break;
+    case 'Status':
+      Page = Status;
+      break;
+    case 'Finish Lynx':
+      Page = FLSetup;
+      break;
+    case 'Help':
+      Page = FinishLynxHelp;
+      break;
+  }
   return (
-    // <div style={{ display: 'flex', flexFlow: 'column' }}>
     <Paper className={classes.root} square>
       {/* Keeep Tabs from scrolling by surround with fixed */}
       <div>
@@ -47,15 +63,14 @@ export default function CenteredTabs() {
             marginBottom: '1em',
           }}
         >
-          <Tab label="Status" />
-          <Tab label="Settings" />
-          <Tab label="Help" />
+          <Tab label="Status" value="Status" />
+          <Tab label="CrewTimer" value="CrewTimer" />
+          <Tab label="Finish Lynx" value="Finish Lynx" />
+          <Tab label="Help" value="Help" />
         </Tabs>
       </div>
       <Tabs style={{ zIndex: 0 }} />
-      {tabPosition === 0 && <Status />}
-      {tabPosition === 1 && <Setup />}
-      {tabPosition === 2 && <FinishLynxHelp />}
+      <Page />
       <Toast />
     </Paper>
     // </div>

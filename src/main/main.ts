@@ -14,6 +14,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import './lapstorage/lapstorage-ipc-handler';
 import './store/store';
+import './util/fileops-handler';
 import './finishlynx/finishlynx-ipc-handler';
 import './firebase/firebase-ipc-handler';
 import { getMainWindow, setMainWindow } from './mainWindow';
@@ -80,6 +81,10 @@ const createWindow = async () => {
   });
   setMainWindow(mainWindow);
 
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -106,6 +111,7 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   // new AppUpdater();
@@ -118,9 +124,12 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  // if (process.platform !== 'darwin') {
+  //   app.quit();
+  // }
+
+  // Just quit instead of using platform check for darwin
+  app.quit();
 });
 
 app

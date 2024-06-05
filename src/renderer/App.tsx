@@ -5,12 +5,13 @@ import CenteredTabs from './CenteredTabs';
 import InitProgress, { useInitProgress } from './InitProgress';
 import Nav from './Nav';
 import StatusMonitor from './StatusMonitor';
-import { setInitializing } from './util/UseSettings';
+import { setInitializing, useLynxPort } from './util/UseSettings';
 
 const { startLapStorage } = window.LapStorage;
 const { stopLapStorage } = window.LapStorage;
 export default function App() {
-  const [, setInitProgress] = useInitProgress();
+  const [initProgress, setInitProgress] = useInitProgress();
+  const [lynxPort] = useLynxPort();
   useEffect(() => {
     setInitializing(true);
     const doInit = async () => {
@@ -22,13 +23,12 @@ export default function App() {
       await startLapStorage();
       setInitProgress(50);
 
-      window.FinishLynx.startLynxServer();
       setInitProgress(75);
 
-      // refreshAuthStatus();
       setInitProgress(100);
 
-      setInitializing(false);
+      // Wait for stored data to be loaded
+      setTimeout(() => setInitializing(false), 200);
     };
     doInit();
     return () => {
@@ -37,6 +37,10 @@ export default function App() {
       window.Firebase.stopFirebase();
     };
   }, [setInitProgress]);
+
+  useEffect(() => {
+    window.FinishLynx.startLynxServer();
+  }, [initProgress >= 50, lynxPort]);
 
   return (
     <Router>

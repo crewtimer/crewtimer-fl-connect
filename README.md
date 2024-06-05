@@ -31,15 +31,40 @@ node-gyp 9.1.0
       path: require.resolve('path-browserify'),
     },``` to make path available from the renderer.
 
+**Update** Node 18 fails when building native support.  Node 16 is currently working and has
+several workarounds in place:
+
+1. Added an explicity dependency forcing of *"isbinaryfile": "4.0.8"* in resolutions section of package.json.
+2. Manually create src/node_modules symbolic link to release/app/node_modules in postinstall script.  This should be done as one of the build automation steps but for some reason is not.
+
 ## Building from scratch
 
+node 16 is known to work.  node 18 may be problematic.  Try one or the other if issues.
+
 ```bash
-git clone git@github.com:glenne/crewtimer-lynx.git
-npm install
-npm start
+# Verify using npm 16.  18 does not work
+npm --version
+# Clone the repo
+git clone git@github.com:crewtimer/crewtimer-fl-connect.git
+# Build
+cd crewtimer-fl-connect
+yarn install
+# Run
+yarn start
+
+```
+
+To create a notarized macos build, create a .env file with the following contents.  **Do not commit this file to the repo**
+
+```txt
+APPLE_ID=glenne@engel.org
+APPLE_APP_SPECIFIC_PASSWORD=xxxx-xxxx-xxxx-xxxx
+TEAM_ID=P<snip>4
 ```
 
 If the build fails with a node-gyp error, be sure node-gyp is installed globally.
+
+If the run fails with 'cannot locate sqlite', remove the src/node_modules symbolic link and `yarn install` again.
 
 ## Debugging
 

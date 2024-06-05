@@ -1,7 +1,7 @@
 import { UseDatum } from 'react-usedatum';
 import { MobileSettings } from 'crewtimer-common';
 import { UseMemDatum, UseStoredDatum } from '../store/UseElectronDatum';
-import { LynxFolderOK, N_LYNX_FOLDER } from '../shared/FinishLynx';
+import { LynxFolderOK, N_LYNX_FOLDER, N_LYNX_PORT } from '../shared/FinishLynx';
 import {
   FirebaseConnectedKey,
   MobileConfigCountKey,
@@ -16,6 +16,7 @@ import {
 
 const { LapStorage } = window;
 export const AUTH_OK = 'OK';
+
 export const [useMobilePin, setMobilePin, getMobilePin] = UseStoredDatum(
   'MobileKey',
   ''
@@ -36,7 +37,7 @@ export const [useMobileID, setMobileID, getMobileID] = UseStoredDatum(
 
 export const [useWaypoint, setWaypoint, getWaypoint] = UseStoredDatum(
   N_WAYPOINT,
-  'Start'
+  'Finish'
 );
 export const [useFLStartWaypoint, setFLStartWaypoint, getFLStartWaypoint] =
   UseStoredDatum(N_FL_START_WAYPOINT, 'Start');
@@ -74,8 +75,16 @@ export const [useLynxFolder, setLynxFolder, getLynxFolder] = UseStoredDatum(
     window.FinishLynx.validateLynxFolder(folder);
   }
 );
-export const [useTabPosition, setTabPosition, getTabPosition] =
-  UseStoredDatum<number>('tabPosition', 2);
+
+export const [useLynxPort, setLynxPort, getLynxPort] = UseStoredDatum(
+  N_LYNX_PORT,
+  window.platform.platform === 'darwin' ? 6000 : 5000
+);
+
+export const [useTabPosition, setTabPosition, getTabPosition] = UseStoredDatum(
+  'systemTabPosition',
+  'Finish Lynx'
+);
 
 export const [useFirebaseConnected, setFirebaseConnected] = UseMemDatum(
   FirebaseConnectedKey,

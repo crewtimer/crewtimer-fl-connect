@@ -5,7 +5,7 @@ import {
   Unsubscribe,
   DataSnapshot,
 } from 'firebase/database';
-import firebasedb from './FirebaseConfig';
+import firebasedb from '../../renderer/shared/FirebaseConfig';
 import {
   getMobileConfigCount,
   getMobileID,
@@ -48,6 +48,7 @@ function onConfigChanged() {
   if (!mobilePin || !mobileID) {
     return;
   }
+
   const { regattaID } = getConnectionProps(mobileID);
   const db = firebasedb(mobileID);
   dbref = ref(db, `mobile/${regattaID}/settings`);

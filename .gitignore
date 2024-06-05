@@ -33,3 +33,4 @@ CrewTimer.db
 *.evt
 *.sch
 /CrewTimer.lss
+.env
