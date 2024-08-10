@@ -313,7 +313,7 @@ export default function Setup() {
                   }}
                   style={{ display: 'inline-flex' }}
                 />
-                <Tooltip title="Specify regex pattern to create a flight.  e.g. 1[0-9][0-9] for events 100-199">
+                <Tooltip title="Specify regex pattern to create a flight.  e.g. 1[2-9][0-9] for events 120-199. Semicolon to separate multiple.">
                   <Box
                     style={{
                       display: 'flex',

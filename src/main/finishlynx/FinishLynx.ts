@@ -161,7 +161,7 @@ const sanitize = (s?: string) => {
 export async function generateEvtFiles() {
   const day = getDay();
   const dir = getLynxFolder();
-  const flightRacesRegex = getFlightRaces() || '^.*';
+  const flightRacesRegexList = (getFlightRaces() || '^.*').split(';');
   const mobileConfig = getMobileConfig();
   if (!mobileConfig) {
     return;
@@ -186,8 +186,8 @@ export async function generateEvtFiles() {
   const flightsLookup = new Map<string, string>();
   const flightInSchedule = new Set<string>();
 
-  if (flightRacesRegex) {
-    const regex = RegExp(flightRacesRegex);
+  flightRacesRegexList.forEach((flightRacesRegex) => {
+    const regex = RegExp(flightRacesRegex, 'i');
     const numList: string[] = [];
 
     eventList.forEach((event) => {
@@ -197,7 +197,7 @@ export async function generateEvtFiles() {
     });
     flightRaces = [...flightRaces, numList];
     // Log.info('DBG', JSON.stringify(numList));
-  }
+  });
 
   flightRaces.forEach((race) => {
     if (race.length === 0) {
@@ -222,7 +222,7 @@ export async function generateEvtFiles() {
     // const raceType = event.RaceType || mobileConfig.info.RaceType;
     evtTypes.add(event.RaceType || mobileConfig.info.RaceType);
 
-    event.eventItems.forEach((entry) => {
+    event.eventItems?.forEach((entry) => {
       const events = bowToEventList.get(entry.Bow) || [];
       events.push(entry.EventNum);
       bowToEventList.set(entry.Bow, events);
@@ -240,6 +240,9 @@ export async function generateEvtFiles() {
   let evtdata: (string[] | string)[] = [];
   let schdata: string[] = [];
   eventList.forEach((event) => {
+    if (event.RaceType === 'Info') {
+      return;
+    }
     // const raceType = event.RaceType || mobileConfig.info.RaceType;
     const evt = `${event.EventNum},0,0,${sanitize(event.Event)}`;
     const entries: string[] = [];
@@ -275,7 +278,7 @@ export async function generateEvtFiles() {
 
     // construct a line as ',<evt-bow>,<bow>,<stroke>,<event>,<crew>'
     // or ',<evt-bow>,<evt-bow>,<stroke>,<event>,<crew>' when dups present
-    event.eventItems.forEach((entry) => {
+    event.eventItems?.forEach((entry) => {
       const eventStart = event.Start;
       const line = `${entry.Bow},${
         entry.Stroke ? sanitize(entry.Stroke) : ''
