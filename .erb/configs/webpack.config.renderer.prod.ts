@@ -48,6 +48,8 @@ const configuration: webpack.Configuration = {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
+              // Use the modern Dart Sass API explicitly
+              implementation: require('sass'),
             },
           },
           'sass-loader',
@@ -74,12 +76,7 @@ const configuration: webpack.Configuration = {
 
   optimization: {
     minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        parallel: true,
-      }),
-      new CssMinimizerPlugin(),
-    ],
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
   },
 
   plugins: [
@@ -103,6 +100,7 @@ const configuration: webpack.Configuration = {
 
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
+      analyzerPort: 8889,
     }),
 
     new HtmlWebpackPlugin({
@@ -114,7 +112,11 @@ const configuration: webpack.Configuration = {
         removeComments: true,
       },
       isBrowser: false,
-      isDevelopment: process.env.NODE_ENV !== 'production',
+      isDevelopment: false,
+    }),
+
+    new webpack.DefinePlugin({
+      'process.type': '"renderer"',
     }),
   ],
 };

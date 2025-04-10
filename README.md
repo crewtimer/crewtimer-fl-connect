@@ -5,45 +5,32 @@ the [Electron React Boilerplate Project](https://electron-react-boilerplate.js.o
 
 See the [VSCode plugins suggested here](https://electron-react-boilerplate.js.org/docs/editor-configuration).
 
-## Installation and Configuration tweaks
+## Build Environment
 
-MacOS can build for all targets - mac, win, linux
+### Macos
 
-To build native libs (sqlite3) a recent version of npm is needed.
+Install brew from [brew.sh](https://brew.sh)
 
-These versions are known to work together:
+```bash
+brew install nvm
+brew install nasm
+brew install yasm
+brew install pkg-config
+brew install cmake
 
-node 14.17.0
-npm 6.14.13
-node-gyp 9.1.0
+nvm install 18
+nvm use 18
 
-* Run `nvm ls-remote --lts` and pick a version.  e.g. 15.11.0
-* Install `nvm install 15.11.0`
-* Use it `nvm use 15.11.0`
-* Make it default `nvm alias default v15.11.0`
-* Update node-gyp `npm i -g node-gyp@latest"`.  Required to build sqlite3.
-* Some report needing this: `npm config set node_gyp "/usr/local/lib/node_modules/node-gyp/bin/node-gyp.js`
-* Add sqlite3 to release/app/package.json instead of top level. `cd release/app && npm i --save sqlite3`
-* For firebase, edit webpack.config.renderer.dev.dll.ts and modify renderer field `entry: {
-    renderer: Object.keys(dependencies || {}).filter((it) => it !== 'firebase'),
-  },` . See [stackoverflow](https://stackoverflow.com/a/72220505/924369) for issue it resolves.
-* In resolve: section of , add ```fallback: {
-      path: require.resolve('path-browserify'),
-    },``` to make path available from the renderer.
-
-**Update** Node 18 fails when building native support.  Node 16 is currently working and has
-several workarounds in place:
-
-1. Added an explicity dependency forcing of *"isbinaryfile": "4.0.8"* in resolutions section of package.json.
-2. Manually create src/node_modules symbolic link to release/app/node_modules in postinstall script.  This should be done as one of the build automation steps but for some reason is not.
+npm i -g node-gyp@latest
+npm i -g yarn
+npm i -g ts-node
+```
 
 ## Building from scratch
 
-node 16 is known to work.  node 18 may be problematic.  Try one or the other if issues.
 
 ```bash
-# Verify using npm 16.  18 does not work
-npm --version
+node --version # ensure you are using node 18
 # Clone the repo
 git clone git@github.com:crewtimer/crewtimer-fl-connect.git
 # Build
@@ -97,7 +84,7 @@ scoreboard must be provided with the IP address where CrewTimer FL Connect is ru
 
 1. Find the macOS IP Address for the Parallels container. Issue `ifconfig` and look for the IP address associated with the vnic1 interface. E.g. 10.37.129.2. This will be used within FinishLynx.
 2. Run FinishLynx within Parallels and configure a scoreboard with the IP address found in the prior step.
-3. Run CrewTimer FL Connect on macOS: `npm start`
+3. Run CrewTimer FL Connect on macOS: `yarn start`
 
 ## Using Manual Start on FL
 
@@ -109,7 +96,7 @@ scoreboard must be provided with the IP address where CrewTimer FL Connect is ru
 ## Releasing new versions
 
 1. Edit [release/app/package.json](release/app/package.json) and src/renderer/Nav.tsx and adjust version info
-2. Execute `npm run winbuild`
+2. Execute `yarn macbuild && yarn winbuild`
 3. Look in release/ for the exe file
 4. Copy the exe to the 'CrewTimer Installers' google drive folder.
 5. Make a copy of the installer and rename it without a version: `CrewTimerConnect Setup.exe`.

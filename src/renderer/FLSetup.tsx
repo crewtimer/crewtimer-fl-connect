@@ -13,7 +13,6 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import path from 'path';
 import { FormControlLabel, InputLabel } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -318,10 +317,10 @@ export default function FLSetup() {
                 <Typography className={classes.vertSpace}>
                   {`Last updated: ${configUpdatedDate}`}
                 </Typography>
-                <Typography>{path.join(lynxFolder, 'Lynx.evt')}</Typography>
-                <Typography>{path.join(lynxFolder, 'Lynx.sch')}</Typography>
+                <Typography>{`${lynxFolder}${window.platform.pathSeparator}Lynx.evt`}</Typography>
+                <Typography>{`${lynxFolder}${window.platform.pathSeparator}Lynx.sch`}</Typography>
                 <Typography>
-                  {path.join(lynxFolder, 'CrewTimer.lss')}
+                  {`${lynxFolder}${window.platform.pathSeparator}CrewTimer.lss`}
                 </Typography>
                 <Typography>{`TCP Port: ${lynxPort}`}</Typography>
                 {lynxFolderOK && (

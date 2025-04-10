@@ -8,7 +8,8 @@ const txt = `
 Using the CrewTimer FinishLynx Connect utility with FinishLynx requires both
 CrewTimer and FinishLynx to be in agreement about the configuration.
 
-For a quick overview see the [CrewTimer FinishLynx Connect video](https://www.youtube.com/watch?v=633Bw2ub20Q).
+* For a quick overview see the [CrewTimer FinishLynx Connect video](https://www.youtube.com/watch?v=633Bw2ub20Q).
+* For more detailed instructions and tips, see the [CrewTimer FinishLynx Connect Documentation](https://crewtimer.com/help/FinishLynx).
 
 **You must be running FinishLynx 12.10 or later for full functionality**  In addition the FinishLynx Network Comm Port option (or alternative) must be present and activated.
 
@@ -21,7 +22,7 @@ This will place a CrewTimer.lss scoreboard file into the specified folder.
    - Create New Scoreboard
       - Script: CrewTimer.lss
       - Serial Port: Network(connect)
-      - Port: ${getLynxPort()}
+      - Port: ${getLynxPort()} (do not use 5000 on a mac)
       - IP Address: 127.0.0.1 if CrewTimer FinishLynx Connect running on same machine
       - Running Time: Off
       - Results:
@@ -56,7 +57,19 @@ const FinishLynxHelp = () => {
         paddingBottom: '2em',
       }}
     >
-      <ReactMarkdown transformImageUri={uriHandler}>{txt}</ReactMarkdown>
+      {/* use components options to ensure links open in a new tab with target="_blank" */}
+      <ReactMarkdown transformImageUri={uriHandler}  components={{
+      a: ({ href, children, ...props }) => (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          {...props}
+        >
+          {children}
+        </a>
+      ),
+    }}>{txt}</ReactMarkdown>
     </Container>
   );
 };

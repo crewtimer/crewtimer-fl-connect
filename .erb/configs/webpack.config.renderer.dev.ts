@@ -17,24 +17,23 @@ if (process.env.NODE_ENV === 'production') {
   checkNodeEnv('development');
 }
 
-const port = process.env.PORT || 1212;
+const port = process.env.PORT || 1214;
 const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const requiredByDLLConfig = module.parent!.filename.includes(
-  'webpack.config.renderer.dev.dll'
-);
+const skipDLLs =
+  module.parent?.filename.includes('webpack.config.renderer.dev.dll') ||
+  module.parent?.filename.includes('webpack.config.eslint');
 
 /**
  * Warn if the DLL is not built
  */
 if (
-  !requiredByDLLConfig &&
+  !skipDLLs &&
   !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))
 ) {
   console.log(
     chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-    )
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"',
+    ),
   );
   execSync('npm run postinstall');
 }
@@ -64,7 +63,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
+        test: /\.s?(c|a)ss$/,
         use: [
           'style-loader',
           {
@@ -73,6 +72,8 @@ const configuration: webpack.Configuration = {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
+              // Use the modern Dart Sass API explicitly
+              implementation: require('sass'),
             },
           },
           'sass-loader',
@@ -94,10 +95,14 @@ const configuration: webpack.Configuration = {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
+      {
+        test: /\.md$/,
+        use: 'raw-loader',
+      },
     ],
   },
   plugins: [
-    ...(requiredByDLLConfig
+    ...(skipDLLs
       ? []
       : [
           new webpack.DllReferencePlugin({
@@ -175,7 +180,7 @@ const configuration: webpack.Configuration = {
       let args = ['run', 'start:main'];
       if (process.env.MAIN_ARGS) {
         args = args.concat(
-          ['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat()
+          ['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat(),
         );
       }
       spawn('npm', args, {
