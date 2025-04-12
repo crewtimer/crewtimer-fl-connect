@@ -168,16 +168,19 @@ class LapStorage {
    * @param datum The lap datum to update.
    */
   static updateLap = (datum: Lap) => {
-    const seqNum = datum.SequenceNum || 0;
-    datum.SequenceNum = seqNum + 1;
     datum.Timestamp = Date.now();
+    datum.src = 'FinishLynx';
 
     const laps = getLaps();
     const existing = laps.findIndex((lap) => lap.keyid === datum.keyid);
     if (existing >= 0) {
+      // retain uuid and bump SequenceNum
+      const existingLap = laps[existing];
+      datum.uuid = existingLap.uuid;
       laps[existing] = datum;
     } else {
-      laps.push(datum); // Add to end
+      datum.SequenceNum = datum.SequenceNum || 1;
+      laps.push(datum); // Add to end as new lap
     }
     setLaps(laps);
 
@@ -287,7 +290,9 @@ export const storeLap = (datum: Lap) => {
     }
 
     datum.uuid = lap.uuid; // keep same uuid
-    laps.splice(existing, 1); // remove from list
+    datum.SequenceNum =
+      typeof lap.SequenceNum === 'number' ? lap.SequenceNum + 10 : 1;
+    // laps.splice(existing, 1); // remove from list
   } else if (milliTime === 0) {
     // FL can send all entries including those without times yet
     return; // Ignore

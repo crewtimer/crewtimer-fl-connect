@@ -149,6 +149,8 @@ const server = net.createServer((sock: Socket) => {
           (eventInfo?.RaceType
             ? eventInfo.RaceType
             : mobileSettings?.info.RaceType) === 'Sprint';
+
+        // true if FL is set up to record starts rather than finish or intermediate waypoints
         const isSprintStart =
           eventInfo && waypoint.toLowerCase().includes('start') && isSprint;
 
@@ -189,18 +191,27 @@ const server = net.createServer((sock: Socket) => {
           Stroke: '',
         };
 
-        if (isSprint && flStartEnable && start) {
+        if (isSprint && flStartEnable && !isSprintStart) {
+          // The 'start' prop may be '' or a Time.
+          // Only update if we have a start Time to apply or we previuosly had a start time but now it's not set
           const startGate = gateFromWaypoint(flStartWaypoint);
-          storeLap({
-            ...lap,
-            uuid: uuidgen.generate(),
-            keyid: `${startGate}-${EventNum}-*`,
-            Bow: '*',
-            Time: start,
-            Gate: startGate,
-          });
+          const startKeyId = `${startGate}-${EventNum}-*`;
+          const existingStart = laps.find((lap) => lap.keyid === startKeyId);
+          if (existingStart || start) {
+            // Note that storeLap will treat this as a no-op if properties dont change
+            storeLap({
+              ...lap,
+              uuid: existingStart ? existingStart.uuid : uuidgen.generate(),
+              keyid: startKeyId,
+              Bow: '*',
+              Time: start || existingStart?.Time,
+              Gate: startGate,
+              State: !start && existingStart ? 'Deleted' : undefined,
+            });
+          }
         }
 
+        // Check for penalties to manage
         const existingPen = laps.find((item) => item.keyid === penid);
         if (existingPen) {
           const newLap = { ...existingPen };
@@ -233,16 +244,15 @@ const server = net.createServer((sock: Socket) => {
           });
         }
 
-        if (time) {
-          if (existing) {
-            if (timeMilli === 0) {
-              lap.State = 'Deleted';
-            } else {
-              delete lap.State; // it might have been deleted
-            }
-          }
+        if (existing && timeMilli === 0) {
+          lap.Time = existing.Time;
+          lap.State = 'Deleted';
+          storeLap(lap);
+        } else if (timeMilli) {
+          delete lap.State;
           storeLap(lap);
         }
+
       });
     } catch (e) {
       Log.error('FL', `${e} Input=${msg}`);

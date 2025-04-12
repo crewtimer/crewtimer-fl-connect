@@ -47,7 +47,7 @@ export default function StatusMonitor() {
     const laps = getLaps();
     clearEntryResults(undefined);
     for (const lap of laps) {
-      const key = `${lap.Gate}_${lap.EventNum}_${lap.Bow}`;
+      const key = `${lap.Gate}-${lap.EventNum}-${lap.Bow}`;
       lap.keyid = key;
       setEntryResult(key, lap);
     }

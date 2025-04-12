@@ -105,6 +105,12 @@ const Row = ({ data, index, style }: ListChildComponentProps) => {
         >
           {gate}
         </Typography>
+        {/* <Typography
+          noWrap
+          className={clsx(classes.common, classes.gate, strike)}
+        >
+          {lap.SequenceNum}
+        </Typography> */}
         <Typography noWrap className={clsx(classes.event, strike)}>
           {EventNum}
         </Typography>

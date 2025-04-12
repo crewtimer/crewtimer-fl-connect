@@ -214,18 +214,15 @@
       "!node_modules/**/*.c",
       "!node_modules/**/*.hpp",
       "!node_modules/**/*.h",
-      "!node_modules/**/bin/**",
-      "!node_modules/**/prebuilds/**",
-      "!node_modules/**/lib/**",
-      "!node_modules/**/scripts/**",
-      "!node_modules/**/lib-build/**/*"
+      "!node_modules/**/*.md"
     ],
     "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {
         "target": "default",
         "arch": [
-          "arm64"
+          "arm64",
+          "x64"
         ]
       },
       "type": "distribution",

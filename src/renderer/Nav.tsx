@@ -25,7 +25,7 @@ import { getConnectionProps } from './util/Util';
 import { setToast } from './Toast';
 import { useUserMessages } from './util/UserMessage';
 
-const AboutText = `CrewTimer FinishLynx Connect v1.1.3`;
+const AboutText = `CrewTimer FinishLynx Connect ${window.platform.appVersion}`;
 
 const { LapStorage } = window;
 

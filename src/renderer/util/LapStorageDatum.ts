@@ -16,7 +16,8 @@ export const [
 ] = UseKeyedDatum<Lap | undefined>();
 
 export const setEntryResultAndPublish = (key: string, lap: Lap) => {
+  lap.SequenceNum =
+    typeof lap.SequenceNum === 'number' ? lap.SequenceNum + 10 : 1;
   setEntryResult(key, lap, true);
-  lap.SequenceNum = (lap.SequenceNum || 0) + 1;
   window.LapStorage.updateLap(lap);
 };
